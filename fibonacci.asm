@@ -4,42 +4,38 @@
 
 main:
 
-	addi $s0, $zero, 6	# n = 6	
-	add $a0, $zero, $s0	# se carga arg para calcular fibonacci con valor de n
-	
+	addi $a0, $zero, 6	# n = 6	
+	#add $a0, $zero, $s0	
 	jal fibonacci
-	jr $ra
-	
-	j exit
+	move $a1, $v0	# save return value to a1
+
 			
 fibonacci:
 
 	addi $sp, $sp, -12	# reserve space in stack for 3 regs
 	sw $ra, 0($sp)		# store $ra	in stack
-	sw $a0, 4($sp)		# store $a0	in stack
-	sw $s0, 8($sp)		# store $s0	in stack
+	sw $s0, 4($sp)		# store $s0	in stack
+	sw $s1, 8($sp)		# store $s1	in stack
 	
-	blt $s0, 2, one		#if (n<2) jump to one
+	add $s0, $zero, $a0	#s0 = a0 = n
+	li $v0, 1		#return value for base condition
 	
-	addi $s0, $s0, -1	# n - 1	
+	blt $s0, 2, fibExit		#if (n<2) jump to fibExit
 
-	
-	addi $t0,$s0, -2	# n - 2
-	add $v0, $t0, $s0	# fib(n-1) + fib(n-2)
+	addi $a0, $s0, -1	# s0 = n-1
 	jal fibonacci
 	
+	add $s1,$zero, $v0	# s1 = f(n-1)
+	add $a0, $s0, -2	# s0 = n-2
+	jal fibonacci
 	
+	add $v0, $s1, $v0	#f(n-1)+f(n-2)
+	
+fibExit:	
 	lw $ra, 0($sp)		# load $ra from stack
 	lw $a0, 4($sp)		# load a0 from stack
-	lw $t0, 8($sp)		# 
-	add $sp, $sp, 12	# restore space in stack
+	lw $s0, 8($sp)		# 
+	addi $sp, $sp, 12	# restore space in stack
 	jr $ra
 	
-	j exit
 	
-one:
-
-	add $v0, $zero, $s0	# return n
-	j exit
-	
-exit:
