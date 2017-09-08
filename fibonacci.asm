@@ -22,12 +22,12 @@ fibonacci:
 	blt $s0, 2, one		#if (n<2) jump to one
 	
 	addi $s0, $s0, -1	# n - 1	
+
 	
 	addi $t0,$s0, -2	# n - 2
+	add $v0, $t0, $s0	# fib(n-1) + fib(n-2)
 	jal fibonacci
 	
-	
-	add $v0, $t0, $s0	# fib(n-1) + fib(n-2)
 	
 	lw $ra, 0($sp)		# load $ra from stack
 	lw $a0, 4($sp)		# load a0 from stack
